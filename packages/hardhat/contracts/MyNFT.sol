@@ -7,7 +7,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MyNFT is ERC721URIStorage, Ownable {
 	uint256 private _nextTokenId;
-	mapping(address => string[]) addrToMintedNfts;
+	mapping(address => string[]) addrToMintedNFTs;
+	mapping(address => string[]) addrToMintableNFTs;
 
 	constructor() ERC721("MyNFT", "MDFK") {}
 
@@ -16,11 +17,15 @@ contract MyNFT is ERC721URIStorage, Ownable {
 		string memory tokenURI,
 		string memory badgeType
 	) public returns (uint256) {
-		if (containsString(addrToMintedNfts[recipient], badgeType)) {
+		if (containsString(addrToMintedNFTs[recipient], badgeType)) {
 			revert("Already minted");
 		}
+		if (!containsString(addrToMintableNFTs[recipient], badgeType)) {
+			revert("NFT not whitelisted for address");
+		}
 
-		addrToMintedNfts[recipient].push(badgeType);
+		addrToMintedNFTs[recipient].push(badgeType);
+		removeMintableNFT(recipient, badgeType);
 
 		uint256 tokenId = _nextTokenId++;
 		_safeMint(recipient, tokenId);
@@ -33,27 +38,43 @@ contract MyNFT is ERC721URIStorage, Ownable {
 		return _nextTokenId + 1;
 	}
 
+	function getPublicMintableNFTs(
+		address _addr
+	) public view returns (string[] memory) {
+		return addrToMintableNFTs[_addr];
+	}
+
+	function getMintedNFTs(
+		address _addr
+	) public view returns (string[] memory) {
+		return addrToMintedNFTs[_addr];
+	}
+
+	function updateMintableNFTs(address addr, int rating) public onlyOwner {
+		addrToMintableNFTs[addr] = getMintableNFTs(addr, rating);
+	}
+
 	function getMintableNFTs(
 		address _addr,
 		int _rating
-	) public view returns (string[] memory) {
+	) private view onlyOwner returns (string[] memory) {
 		string[] memory mintableNFTs = new string[](3); // Assuming a maximum of 3 elements
 		uint256 count = 0;
 
 		if (
-			_rating > 500 && !containsString(addrToMintedNfts[_addr], "Breakey")
+			_rating > 500 && !containsString(addrToMintedNFTs[_addr], "Breakey")
 		) {
 			mintableNFTs[count++] = "Breakey";
 		}
 		if (
 			_rating > 1000 &&
-			!containsString(addrToMintedNfts[_addr], "Middlebreaker")
+			!containsString(addrToMintedNFTs[_addr], "Middlebreaker")
 		) {
 			mintableNFTs[count++] = "Middlebreaker";
 		}
 		if (
 			_rating > 1500 &&
-			!containsString(addrToMintedNfts[_addr], "Breakeroo")
+			!containsString(addrToMintedNFTs[_addr], "Breakeroo")
 		) {
 			mintableNFTs[count++] = "Breakeroo";
 		}
@@ -70,7 +91,7 @@ contract MyNFT is ERC721URIStorage, Ownable {
 	function containsString(
 		string[] memory _list,
 		string memory _value
-	) public pure returns (bool) {
+	) private pure returns (bool) {
 		for (uint i = 0; i < _list.length; i++) {
 			if (
 				keccak256(abi.encodePacked((_list[i]))) ==
@@ -80,5 +101,31 @@ contract MyNFT is ERC721URIStorage, Ownable {
 			}
 		}
 		return false;
+	}
+
+	function removeMintableNFT(
+		address _address,
+		string memory _badgeType
+	) private {
+		string[] storage array = addrToMintableNFTs[_address];
+		uint index = 0;
+		bool found = false;
+
+		for (uint i = 0; i < array.length; i++) {
+			if (
+				keccak256(abi.encodePacked((array[i]))) ==
+				keccak256(abi.encodePacked((_badgeType)))
+			) {
+				index = i;
+				found = true;
+				break;
+			}
+		}
+
+		if (found) {
+			delete array[index];
+			array[index] = array[array.length - 1];
+			array.pop();
+		}
 	}
 }
