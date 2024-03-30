@@ -9,6 +9,32 @@ import { Address } from "~~/components/scaffold-eth";
 const Home: NextPage = () => {
   const { address: connectedAddress } = useAccount();
 
+  async function mintNFT() {
+    try {
+      const response = await fetch("/api/mint-nft", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          address: "0x816cec8d7E1a386f12764bAAD4004529332CA614", // Example address
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      console.log("Minting successful:", data);
+      // Here you can handle the response, e.g., show a success message or redirect
+    } catch (error) {
+      console.error("Error minting NFT:", error);
+      // Handle errors, e.g., show an error message
+    }
+  }
+
+  // Assuming you have the mintNFT function defined in the same file or imported
   return (
     <>
       <div className="flex items-center flex-col flex-grow pt-10">
@@ -61,6 +87,7 @@ const Home: NextPage = () => {
                 tab.
               </p>
             </div>
+            <button onClick={mintNFT}>Mint NFT</button>
           </div>
         </div>
       </div>

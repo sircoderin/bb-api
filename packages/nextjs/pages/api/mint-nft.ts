@@ -1,4 +1,4 @@
-import { getNFTContract, getNFTHash } from "../../utils/contract-helper";
+import { getNFTHash, getOwnerNFTContract, setRequest } from "../../utils/contract-helper";
 import pinataSDK from "@pinata/sdk";
 import dotenv from "dotenv";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -7,7 +7,7 @@ dotenv.config();
 
 // Call mintNFT function
 async function mintNFT(address: string, tokenUri: string, badgeType: string) {
-  const nftTxn = await getNFTContract().safeMint(address, tokenUri, badgeType);
+  const nftTxn = await getOwnerNFTContract().safeMint(address, tokenUri, badgeType);
   await nftTxn.wait();
   return nftTxn.hash;
 }
@@ -57,8 +57,10 @@ async function uploadNFTMetadata(nft: string, nftId: number) {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  setRequest(req, res);
+
   try {
-    const contract = getNFTContract();
+    const contract = getOwnerNFTContract();
     const mintableNFTs = await contract.getPublicMintableNFTs(req.body.address);
     if (mintableNFTs.length === 0) {
       res.status(400).json({ error: "No NFTs available to mint" });
@@ -73,7 +75,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       txHashes.push(txHash);
     }
 
-    res.status(200).json({ transactionHashes: txHashes });
+    const ipfsHashes: string[] = mintableNFTs.map((nft: string) => getNFTHash(nft));
+    res.status(200).json({ transactionHashes: txHashes, ipfsHashes: ipfsHashes });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred while getting NFTs." });

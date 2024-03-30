@@ -62,18 +62,18 @@ contract MyNFT is ERC721URIStorage, Ownable {
 		uint256 count = 0;
 
 		if (
-			_rating > 500 && !containsString(addrToMintedNFTs[_addr], "Breakey")
+			_rating > 10 && !containsString(addrToMintedNFTs[_addr], "Breakey")
 		) {
 			mintableNFTs[count++] = "Breakey";
 		}
 		if (
-			_rating > 1000 &&
+			_rating > 30 &&
 			!containsString(addrToMintedNFTs[_addr], "Middlebreaker")
 		) {
 			mintableNFTs[count++] = "Middlebreaker";
 		}
 		if (
-			_rating > 1500 &&
+			_rating > 60 &&
 			!containsString(addrToMintedNFTs[_addr], "Breakeroo")
 		) {
 			mintableNFTs[count++] = "Breakeroo";
