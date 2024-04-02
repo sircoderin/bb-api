@@ -57,7 +57,9 @@ async function uploadNFTMetadata(nft: string, nftId: number) {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  setRequest(req, res);
+  if (!setRequest(req, res)) {
+    return;
+  }
 
   try {
     const contract = getOwnerNFTContract();

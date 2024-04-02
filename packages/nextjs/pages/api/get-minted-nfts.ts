@@ -2,7 +2,9 @@ import { getNFTHash, getOwnerNFTContract, setRequest } from "../../utils/contrac
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  setRequest(req, res);
+  if (!setRequest(req, res)) {
+    return;
+  }
 
   try {
     const ipfsHashesMap = new Map();

@@ -3,7 +3,9 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 // Create a contract instance
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  setRequest(req, res);
+  if (!setRequest(req, res)) {
+    return;
+  }
 
   try {
     await getOwnerNFTContract().updateMintableNFTs(req.body.address, req.body.rating);

@@ -4,18 +4,18 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 export function getOwnerNFTContract(): ethers.Contract {
   // Get Alchemy API Key
-  // const API_KEY = process.env.ALCHEMY_API_KEY;
+  // const API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY;
 
   // Define a provider
   // const provider = new ethers.AlchemyProvider("sepolia", API_KEY);
   const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
-  const privateKey = process.env.DEPLOYER_PRIVATE_KEY || "";
+  const privateKey = process.env.NEXT_PUBLIC_DEPLOYER_PRIVATE_KEY || "";
   const signer = new ethers.Wallet(privateKey, provider);
 
   // Get contract ABI and address
   const abi = contract.abi;
-  const contractAddress = process.env.CONTRACT_ADDRESS || "";
+  const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "";
 
   // Create a contract instance
   return new ethers.Contract(contractAddress, abi, signer);
@@ -23,7 +23,6 @@ export function getOwnerNFTContract(): ethers.Contract {
 
 export async function getUserNFTContract(): Promise<ethers.Contract> {
   // Check if MetaMask is installed
-  console.log("ASD", window.ethereum);
   if (typeof window.ethereum !== "undefined") {
     try {
       // Create a provider connected to MetaMask
@@ -47,9 +46,9 @@ export async function getUserNFTContract(): Promise<ethers.Contract> {
   }
 }
 
-const BADGE1_HASH = "QmbJwT5XarQEAwCKDAKBHu9K7CrgiG8fnzMzop4zdpVW2c";
-const BADGE2_HASH = "QmXSzrVgiExggyj4pVniPBinkggUCmrRUH25NU74HY9rTL";
-const BADGE3_HASH = "QmXuxh2aFA5WB4jbehbaABDx5WXgkHzpAksZiScamSi1Vs";
+const BADGE1_HASH = "QmTSzj7bBsoXJ4TAARSL5PoW1orp4oBWBTwLKGxzKnGiZ4";
+const BADGE2_HASH = "QmQyrxVTrfMi8ztRiLhpTmcNhchmUDXZbsjnxz6RUcftyV";
+const BADGE3_HASH = "QmbLFJJDFBj4pKF4jiSKgCueYmTNKkMkbNcXZLvK2KAFEA";
 
 export function getNFTHash(nft: string) {
   let imageHash;
@@ -74,6 +73,8 @@ export function setRequest(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "OPTIONS") {
     // Respond to OPTIONS request
     res.status(200).end();
-    return;
+    return false;
   }
+
+  return true;
 }
