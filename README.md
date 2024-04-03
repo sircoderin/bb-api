@@ -1,10 +1,5 @@
 # 🏗 Bubble Breaker API
 
-<h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
-</h4>
-
 🧪 Special thanks for the tempalte to <a href="https://scaffoldeth.io">Scaffold-ETH 2</a> (<a href="https://docs.scaffoldeth.io">Documentation</a>)
 
 ⚙️ Built using NextJS, RainbowKit, Hardhat, Wagmi, Viem, and Typescript.
