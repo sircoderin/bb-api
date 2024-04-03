@@ -41,15 +41,17 @@ yarn chain
 This command starts a local Ethereum network using Hardhat. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `hardhat.config.ts`.
 
 3. Create a file .env in hardhat containing
-   a. ETHERSCAN_API_KEY
-   b. ALCHEMY_API_KEY
-   c. DEPLOYER_PRIVATE_KEY (only needed when deploying outside local network)
+
+- ETHERSCAN_API_KEY
+- ALCHEMY_API_KEY
+- DEPLOYER_PRIVATE_KEY (only needed when deploying outside local network)
 
 4. Create a file .env.local in nextjs containing
-   a. PINATA_JWT,
-   b. NEXT_PUBLIC_CONTRACT_ADDRESS (from the deploy command)
-   c. NEXT_PUBLIC_DEPLOYER_PRIVATE_KEY (which can be found in hardhat.config.ts for local network)
-   d. NEXT_PUBLIC_ALCHEMY_API_KEY (only needed when deploying outside local network)
+
+- PINATA_JWT
+- NEXT_PUBLIC_CONTRACT_ADDRESS (from the deploy command)
+- NEXT_PUBLIC_DEPLOYER_PRIVATE_KEY (which can be found in hardhat.config.ts for local network)
+- NEXT_PUBLIC_ALCHEMY_API_KEY (only needed when deploying outside local network)
 
 5. On a second terminal, deploy the test contract:
 
