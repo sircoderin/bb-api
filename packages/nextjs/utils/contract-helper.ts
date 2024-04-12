@@ -1,4 +1,4 @@
-import contract from "../../hardhat/artifacts/contracts/MyNFT.sol/MyNFT.json";
+import contract from "../../hardhat/artifacts/contracts/BubbleBreakerBadge.sol/BubbleBreakerBadge.json";
 import { ethers } from "ethers";
 import type { NextApiRequest, NextApiResponse } from "next";
 

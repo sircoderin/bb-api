@@ -1,12 +1,11 @@
 async function main() {
-    // Grab the contract factory 
-    const MyNFT = await ethers.getContractFactory("BubbleBreakerBadge");
+    // Grab the contract
+    const contractDefinition = await ethers.getContractFactory("BubbleBreakerBadge");
  
     // Start deployment, returning a promise that resolves to a contract object
-    const myNFT = await MyNFT.deploy(); // Instance of the contract 
+    const deployedContract = await contractDefinition.deploy(); // Instance of the contract 
 
-    console.log(myNFT);
-    console.log("Contract deployed to address:", myNFT.target);
+    console.log(deployedContract, "Contract deployed to address:", deployedContract.target);
  }
  
  main()
