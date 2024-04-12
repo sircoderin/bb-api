@@ -1,14 +1,15 @@
-import { fromString } from 'uint8arrays/from-string';
 import { getOwnerNFTContract, setRequest } from "../../utils/contract-helper";
-import type { NextApiRequest, NextApiResponse } from "next";
-import { getResolver } from "key-did-resolver";
-import { Ed25519Provider } from "key-did-provider-ed25519";
-import { DID } from "dids";
+import { definition } from "./runtime-definition.js";
 import { ComposeClient } from "@composedb/client";
-const pkg = require('@apollo/client');
-import gql from 'graphql-tag';
-import { definition } from './runtime-definition.js';
-import { ethers } from 'ethers';
+import { DID } from "dids";
+import { ethers } from "ethers";
+import gql from "graphql-tag";
+import { Ed25519Provider } from "key-did-provider-ed25519";
+import { getResolver } from "key-did-resolver";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { fromString } from "uint8arrays/from-string";
+
+const pkg = require("@apollo/client");
 
 const { ApolloClient, ApolloLink, InMemoryCache, Observable } = pkg;
 
@@ -19,13 +20,13 @@ const getComposeDIDClient = async (did: DID) => {
   const link = new ApolloLink((operation: any) => {
     return new Observable((observer: any) => {
       compose.execute(operation.query, operation.variables).then(
-        (result) => {
+        result => {
           observer.next(result);
           observer.complete();
         },
-        (error) => {
+        error => {
           observer.error(error);
-        }
+        },
       );
     });
   });
@@ -34,11 +35,11 @@ const getComposeDIDClient = async (did: DID) => {
 };
 
 const loadAdminDID = async () => {
-  const privateKey = fromString(process.env.DID_ADMIN_PRIVATE_KEY || "", 'base16');
+  const privateKey = fromString(process.env.DID_ADMIN_PRIVATE_KEY || "", "base16");
 
   const adminDID = new DID({
     resolver: getResolver(),
-    provider: new Ed25519Provider(privateKey)
+    provider: new Ed25519Provider(privateKey),
   });
   await adminDID.authenticate();
   return adminDID;
@@ -62,10 +63,11 @@ const computeUserRating = async (beams: any[]) => {
 
   console.log("total AI rating: ", aiRating);
   const beamIds = beams.map(beam => beam.node.id);
-  console.log("beamIds:", beamIds);  
+  console.log("beamIds:", beamIds);
 
   // TODO_BB compute actual total user rating using pagination
-  const userRatings = await client.query({ query: gql`
+  const userRatings = await client.query({
+    query: gql`
     query MyQuery {
       userRatingIndex(last: 100, filters: { where: { beamID: { in: [${beamIds.map(beamId => `"${beamId}"`)}]}}}) {
         edges {
@@ -82,12 +84,12 @@ const computeUserRating = async (beams: any[]) => {
           hasPreviousPage
         }
       }
-    }`
+    }`,
   });
 
   const ratingsByBeamId = userRatings.data.userRatingIndex.edges.reduce((acc: any, rating: any) => {
     if (!acc[rating.node.beamID]) {
-       acc[rating.node.beamID] = [];
+      acc[rating.node.beamID] = [];
     }
     acc[rating.node.beamID].push(rating.node);
     return acc;
@@ -118,10 +120,11 @@ const verifyMessage = async (message: string, address: string, signature: string
     console.log(err);
     return false;
   }
-}
+};
 
 const getUserBeams = async (userDid: string) => {
-  const result = await client.query({ query: gql`
+  const result = await client.query({
+    query: gql`
     query GetBeamsByAuthorDid {
       node(id: "${userDid}") {
         ... on CeramicAccount {
@@ -142,11 +145,11 @@ const getUserBeams = async (userDid: string) => {
           }
         }
       }
-    }`
+    }`,
   });
 
   return result.data.node.akashaBeamList.edges;
-}
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!setRequest(req, res)) {
@@ -157,7 +160,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const verified = await verifyMessage("Bubble Breaker", req.body.address, req.body.signature);
   if (!verified) {
-    res.status(500).json({ error: "Signature is invalid."});
+    res.status(500).json({ error: "Signature is invalid." });
   }
 
   // TODO_BB decide how to handle network id
@@ -165,11 +168,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const userDid = `did:pkh:eip155:11155111:${req.body.address}`;
 
   try {
-  const userBeams = await getUserBeams(userDid);
-  console.log("userBeams:", userBeams);
+    const userBeams = await getUserBeams(userDid);
+    console.log("userBeams:", userBeams);
 
-  const totalRating = await computeUserRating(userBeams);
-  console.log("totalRating:", totalRating);
+    const totalRating = await computeUserRating(userBeams);
+    console.log("totalRating:", totalRating);
 
     await getOwnerNFTContract().updateMintableNFTs(req.body.address, totalRating);
     res.status(200).json({ result: "updated" });
