@@ -51,6 +51,7 @@ contract BubbleBreakerBadge is ERC721URIStorage, Ownable {
 	}
 
 	function updateMintableNFTs(address addr, int rating) public onlyOwner {
+		// TODO_BB revert if no mintable NFTs
 		addrToMintableNFTs[addr] = getMintableNFTs(addr, rating);
 	}
 

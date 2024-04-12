@@ -5,12 +5,13 @@ async function main() {
     // Start deployment, returning a promise that resolves to a contract object
     const deployedContract = await contractDefinition.deploy(); // Instance of the contract 
 
-    console.log(deployedContract, "Contract deployed to address:", deployedContract.target);
+    console.log(deployedContract)
+    console.log("Contract deployed to address:", deployedContract.target);
  }
  
- main()
-   .then(() => process.exit(0))
-   .catch(error => {
-     console.error(error);
-     process.exit(1);
-   });
+main()
+  .then(() => process.exit(0))
+  .catch(error => {
+    console.error(error);
+    process.exit(1);
+  });
