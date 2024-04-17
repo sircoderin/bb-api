@@ -8,6 +8,7 @@ import { Ed25519Provider } from "key-did-provider-ed25519";
 import { getResolver } from "key-did-resolver";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { fromString } from "uint8arrays/from-string";
+import { hardhat } from "viem/chains";
 
 const pkg = require("@apollo/client");
 
@@ -165,7 +166,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // TODO_BB decide how to handle network id
   // we can be send it with the request or no longer include it in the DID since an ETH address should be one user
-  const userDid = `did:pkh:eip155:11155111:${req.body.address}`;
+  const userDid = `did:pkh:eip155:${hardhat.id}:${req.body.address}`;
 
   try {
     const userBeams = await getUserBeams(userDid);
