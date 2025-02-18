@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     BubbleBreakerBadge: {
-      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3", // Hardhat contract address when deplyoing on chain start
+      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       abi: [
         {
           inputs: [],
@@ -70,6 +70,31 @@ const deployedContracts = {
             {
               indexed: true,
               internalType: "address",
+              name: "minter",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "tokenId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "badgeName",
+              type: "string",
+            },
+          ],
+          name: "BadgeMinted",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
               name: "previousOwner",
               type: "address",
             },
@@ -81,6 +106,25 @@ const deployedContracts = {
             },
           ],
           name: "OwnershipTransferred",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "verifier",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "rating",
+              type: "uint256",
+            },
+          ],
+          name: "RatingVerified",
           type: "event",
         },
         {
@@ -107,6 +151,29 @@ const deployedContracts = {
           ],
           name: "Transfer",
           type: "event",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_name",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_tokenURI",
+              type: "string",
+            },
+            {
+              internalType: "uint256",
+              name: "_rating",
+              type: "uint256",
+            },
+          ],
+          name: "addBadgeType",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
         },
         {
           inputs: [
@@ -140,6 +207,29 @@ const deployedContracts = {
               internalType: "uint256",
               name: "",
               type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getAllBadgeTypes",
+          outputs: [
+            {
+              internalType: "string[]",
+              name: "names",
+              type: "string[]",
+            },
+            {
+              internalType: "string[]",
+              name: "tokenURIs",
+              type: "string[]",
+            },
+            {
+              internalType: "uint256[]",
+              name: "ratings",
+              type: "uint256[]",
             },
           ],
           stateMutability: "view",
@@ -191,25 +281,6 @@ const deployedContracts = {
               internalType: "uint256",
               name: "",
               type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_addr",
-              type: "address",
-            },
-          ],
-          name: "getPublicMintableNFTs",
-          outputs: [
-            {
-              internalType: "string[]",
-              name: "",
-              type: "string[]",
             },
           ],
           stateMutability: "view",
@@ -285,6 +356,19 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "index",
+              type: "uint256",
+            },
+          ],
+          name: "removeBadgeType",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
           inputs: [],
           name: "renounceOwnership",
           outputs: [],
@@ -294,27 +378,22 @@ const deployedContracts = {
         {
           inputs: [
             {
-              internalType: "address",
-              name: "recipient",
-              type: "address",
+              internalType: "uint256",
+              name: "rating",
+              type: "uint256",
             },
             {
-              internalType: "string",
-              name: "tokenURI",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "badgeType",
-              type: "string",
+              internalType: "bytes",
+              name: "signature",
+              type: "bytes",
             },
           ],
           name: "safeMint",
           outputs: [
             {
-              internalType: "uint256",
+              internalType: "uint256[]",
               name: "",
-              type: "uint256",
+              type: "uint256[]",
             },
           ],
           stateMutability: "nonpayable",
@@ -472,24 +551,6 @@ const deployedContracts = {
             },
           ],
           name: "transferOwnership",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "addr",
-              type: "address",
-            },
-            {
-              internalType: "int256",
-              name: "rating",
-              type: "int256",
-            },
-          ],
-          name: "updateMintableNFTs",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
